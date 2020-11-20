@@ -10,24 +10,38 @@
 
 /* Structure d'une platforme */
 class Platform {
-	constructor (x, y, width, height, type, src) {
+	constructor (x, y, width, height, type, src, img) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
 		this.type = type;
 		this.src = src;
+		this.img = img;
 	}
 
 	/* Affiche la platforme courante dans le canvas */
 	affiche = () => {
-		ctx.drawImage(this.src, this.x, this.y);
+		ctx.drawImage(this.img, this.x, this.y);
+	};
+
+	/* Renvoi si l'obj est dans l'intervalle de l'espace de la platform */
+	IsInInterval = (obj_x_min, obj_x_max) => {
+		let obj_x = [obj_x_min, obj_x_max];
+		for (let i = 0; i < 2; i++) {
+			if (obj_x[i] >= this.x && obj_x[i] <= this.x+this.width){
+				return 1;
+			}
+		}
+		return 0;
 	};
 
 	/* Renvoi 1 si il y a une collision avec l'obj */
 	IsInCollision = (obj) => {
 		/* On verifie la largeur */
 		if ((obj.x >= this.x && obj.x <= this.x + this.width) || (obj.x + obj.width > this.x) && (obj.x + obj.width <= this.x + this.width)) {
+		//if (IsInInterval(obj.x,obj.x+obj.width)) {
+
 			/* On verifie la hauteur */ 
 			if ((obj.y + obj.height >= this.y) && (obj.y + obj.height <= this.y + this.height)) {
 				return 1;
@@ -39,7 +53,7 @@ class Platform {
 
 /* Affiche toute les platforme */
 const affichePlatform = () => { 
-	for (let plaform in platformArray) {
+	for (let platform of platformArray) {
 		platform.affiche();
 	}
 }
@@ -55,16 +69,19 @@ const collision = (character) => {
 				platformArray.splice(i,1);
 			}
 			else {
-				character.setSpeed(maxSpeed);
+				/* Definis le deplacement vers le haut */
+				character.setSpeed(MAX_SPEED);
+				//return 1;
 			}
 		}
 	}
+	//return 0;
 }
 
 /* Met a jour les positions des platform */
 const updatePosPlatform = (speed) => {
 	/* Change la hauteur des platforme (+ largeur pour le type 2) */
-	for (let platform in platformArray) {
+	for (let platform of platformArray) {
 		if (platform.type == 2) {
 			platform.x += speed;
 			if (platform.x >= cnv.width) platform.x = 0;
@@ -79,19 +96,20 @@ const updatePosPlatform = (speed) => {
 	}
 }
 
+/* Creation d'une nouvelle platform a la hauteur dx */
 const createNewPlatform = (dy) => {
 	let larg = 100; 
-	let haut = 15;
+	let haut = 21;
 
 	let type = 1; 
-	let src = "";
 
 	let x = getRandom(0,cnv.width-larg);
 	let y = dy
 
-	platformArray.push(new Platform(x,y,larg,haut,type,src));
+	platformArray.push(new Platform(x,y,larg,haut,type,PLATFORM.src,PLATFORM));
 }
 
+/* Genere les premiere platforme du jeu */
 const genStartMap = () => {
 	let y = 0;
 	let nbPlatformStart = 10;
