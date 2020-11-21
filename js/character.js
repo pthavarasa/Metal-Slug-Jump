@@ -24,7 +24,10 @@ class Character {
 		this.y = ny;
 	};
 
-	/* Si trop a droite, passage a gauche / Si trop a gauche, passe a droite */
+	/* 
+		Si trop a droite, passage a gauche / Si trop a gauche, passe a droite 
+		s'il sort de l'écran par droit il revien par gauche, vise versa
+	*/
 	managePos = () => {
 		if (this.x < -this.width/2) this.setPos(cnv.width-this.width,this.y);
 		if (this.x >= cnv.width) this.setPos(0, this.y);

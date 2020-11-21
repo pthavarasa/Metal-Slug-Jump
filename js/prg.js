@@ -19,24 +19,28 @@ let mouv_prev = 0;
 
 let platformArray = [];
 
+let etatCle = {}; // tous les clé clavier ("true" si elle est appuyée)
+
 let perso = new Character(Math.floor(cnv.width/2), Math.floor(cnv.height/1.3), 40, 40, DOODLE);
 
 
-/* Gere les deplacement horizontal */ 
-const keydown_fun = e => {
-  //console.log(mouvement)
-  switch (e.code) {
-    case "ArrowRight":
-    	mouvement += MAX_MOV; // ESSAYER DE FAIRE QQL CHOSE AVEC MOUV_PREV POUR AUGMENTER MOUVEMENT AVANT LA NEXT FRAME
-      	break;
-    case "ArrowLeft":
-    	mouvement += MAX_MOV*-1;
-      	break;
+/* Attrape tout les evenement de touche presser et libérer */
+window.addEventListener('keyup',function(e){
+  etatCle[e.keyCode || e.which] = false;
+},true);
+window.addEventListener('keydown',function(e){
+  etatCle[e.keyCode || e.which] = true;
+},true);
+
+/* Gere les deplacement horizontal */
+const evnementClavier = () => {
+  if (etatCle[37] || etatCle[65]){
+    mouvement += MAX_MOV*-1;
+  }
+  if (etatCle[39] || etatCle[68]){
+    mouvement += MAX_MOV;
   }
 }
-
-/* Attrape tout les evenement de touche presser */
-window.addEventListener("keydown", keydown_fun, false);
 
 /* Genere un nombre aleatoire entre min et max */
 const getRandom = (min, max) => {
@@ -62,11 +66,13 @@ run = true;
 /* Rafraichis l'image du jeu */
 const update = () => {
 	if (run){
-		ctx.clearRect(0, 0, cnv.width, cnv.height);
+    ctx.clearRect(0, 0, cnv.width, cnv.height);
+    evnementClavier();
 		affichePlatform();
 		perso.jump();
-		if (perso.y <= 250) { // 250 ?
-			//upScreen(); // Revoir upScreen
+    if (perso.y <= 250) { // 250 ?
+      createNewPlatform(0);
+			upScreen(); // Revoir upScreen
 		}
 		if (perso.y >= cnv.height) {
 			perso.y=0;
