@@ -7,9 +7,11 @@ DOODLE.src = "../img/Doodle.png";
 const PLATFORM = new Image();
 PLATFORM.src = "../img/plateforme.png";
 
-const APENSANTEUR = 2;
-const MAX_SPEED = 30;
+const APESANTEUR = 2;
+const MAX_SPEED = 15 * APESANTEUR;
 const MAX_MOV = 20;
+const LARG_PLATFORM = 100;
+const HAUT_PLATFORM = 20;
 
 let point = 0;
 let mouvement = 0;
@@ -17,18 +19,17 @@ let mouv_prev = 0;
 
 let platformArray = [];
 
-let perso = new Character(Math.floor(cnv.width/2), Math.floor(cnv.height/6), 40, 40, DOODLE);
+let perso = new Character(Math.floor(cnv.width/2), Math.floor(cnv.height/1.3), 40, 40, DOODLE);
 
 
 /* Gere les deplacement horizontal */ 
 const keydown_fun = e => {
-  console.log(mouvement)
+  //console.log(mouvement)
   switch (e.code) {
     case "ArrowRight":
     	mouvement += MAX_MOV; // ESSAYER DE FAIRE QQL CHOSE AVEC MOUV_PREV POUR AUGMENTER MOUVEMENT AVANT LA NEXT FRAME
       	break;
     case "ArrowLeft":
-    	//mouvement += MAX_MOV;
     	mouvement += MAX_MOV*-1;
       	break;
   }
@@ -70,6 +71,9 @@ const update = () => {
 		if (perso.y >= cnv.height) {
 			perso.y=0;
 		}
+    if (perso.y < 0) {
+      //perso.y = 0;
+    }
   }
 }
 

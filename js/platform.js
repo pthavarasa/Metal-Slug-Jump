@@ -10,14 +10,14 @@
 
 /* Structure d'une platforme */
 class Platform {
-	constructor (x, y, width, height, type, src, img) {
+	constructor (x, y, width, height, type, img) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
 		this.type = type;
-		this.src = src;
 		this.img = img;
+		this.src = img.src;
 	}
 
 	/* Affiche la platforme courante dans le canvas */
@@ -25,8 +25,8 @@ class Platform {
 		ctx.drawImage(this.img, this.x, this.y);
 	};
 
-	/* Renvoi si l'obj est dans l'intervalle de l'espace de la platform */
-	IsInInterval = (obj_x_min, obj_x_max) => {
+	/* Renvoi 1 si l'obj est dans l'intervalle de la largeur de la platform */
+	isInInterval_X = (obj_x_min, obj_x_max) => {
 		let obj_x = [obj_x_min, obj_x_max];
 		for (let i = 0; i < 2; i++) {
 			if (obj_x[i] >= this.x && obj_x[i] <= this.x+this.width){
@@ -36,14 +36,21 @@ class Platform {
 		return 0;
 	};
 
+	/* Renvoi 1 si l'obj est dans l'intervalle de la hauteur de la platform */
+	isInInterval_Y = (obj_y) => {
+		if (obj_y >= this.y && obj_y <= this.y+this.height){
+			return 1;
+		}
+		return 0;
+	};
+
 	/* Renvoi 1 si il y a une collision avec l'obj */
-	IsInCollision = (obj) => {
+	isInCollision = (obj) => {
 		/* On verifie la largeur */
-		if ((obj.x >= this.x && obj.x <= this.x + this.width) || (obj.x + obj.width > this.x) && (obj.x + obj.width <= this.x + this.width)) {
-		//if (IsInInterval(obj.x,obj.x+obj.width)) {
+		if (this.isInInterval_X(obj.x,obj.x+obj.width)) {
 
 			/* On verifie la hauteur */ 
-			if ((obj.y + obj.height >= this.y) && (obj.y + obj.height <= this.y + this.height)) {
+			if (this.isInInterval_Y(obj.y+obj.height)) {
 				return 1;
 			}
 		}
@@ -60,9 +67,11 @@ const affichePlatform = () => {
 
 /* Gere les potentiel collision */
 const collision = (character) => {
+	//console.log("collision");
+	//console.log(character);
 	for (let i = 0; i < platformArray.length; i++) {
 		/* Si je rentre en collision en descente */
-		if (platformArray[i].IsInCollision(character) && character.speed < 0){
+		if (platformArray[i].isInCollision(character) && character.speed <= 0){
 			/* Si c'est une platforme qui se brise */
 			if (platformArray[i].type == 3) {
 				/* Supprimer la platforme */
@@ -71,11 +80,11 @@ const collision = (character) => {
 			else {
 				/* Definis le deplacement vers le haut */
 				character.setSpeed(MAX_SPEED);
-				//return 1;
+				return 1;
 			}
 		}
 	}
-	//return 0;
+	return 0;
 }
 
 /* Met a jour les positions des platform */
@@ -98,15 +107,15 @@ const updatePosPlatform = (speed) => {
 
 /* Creation d'une nouvelle platform a la hauteur dx */
 const createNewPlatform = (dy) => {
-	let larg = 100; 
-	let haut = 21;
+	let larg = LARG_PLATFORM; 
+	let haut = HAUT_PLATFORM;
 
 	let type = 1; 
 
 	let x = getRandom(0,cnv.width-larg);
 	let y = dy
 
-	platformArray.push(new Platform(x,y,larg,haut,type,PLATFORM.src,PLATFORM));
+	platformArray.push(new Platform(x,y,larg,haut,type,PLATFORM));
 }
 
 /* Genere les premiere platforme du jeu */
