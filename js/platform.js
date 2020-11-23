@@ -67,8 +67,6 @@ const affichePlatform = () => {
 
 /* Gere les potentiel collision */
 const collision = (character) => {
-	//console.log("collision");
-	//console.log(character);
 	for (let i = 0; i < platformArray.length; i++) {
 		/* Si je rentre en collision en descente */
 		if (platformArray[i].isInCollision(character) && character.speed <= 0){

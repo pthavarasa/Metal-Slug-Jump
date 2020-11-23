@@ -7,6 +7,11 @@ DOODLE.src = "../img/Doodle.png";
 const PLATFORM = new Image();
 PLATFORM.src = "../img/plateforme.png";
 
+const PLATFORM_ = new Image();
+PLATFORM_.src = window.location.pathname+"img/hole/spritesheet.json";
+
+console.log(PLATFORM_);
+
 const APESANTEUR = 2;
 const MAX_SPEED = 15 * APESANTEUR;
 const MAX_MOV = 20;
@@ -68,18 +73,15 @@ const update = () => {
 	if (run){
     ctx.clearRect(0, 0, cnv.width, cnv.height);
     evnementClavier();
-		affichePlatform();
-		perso.jump();
-    if (perso.y <= 250) { // 250 ?
-      createNewPlatform(0);
-			upScreen(); // Revoir upScreen
-		}
-		if (perso.y >= cnv.height) {
-			perso.y=0;
-		}
-    if (perso.y < 0) {
-      //perso.y = 0;
-    }
+	affichePlatform();
+	perso.jump();
+    if (perso.y <= 250) { 
+    	createNewPlatform(0);
+		upScreen(); 
+	}
+	if (perso.y >= cnv.height) {
+		perso.y=0;
+	}
   }
 }
 

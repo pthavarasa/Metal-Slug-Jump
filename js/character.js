@@ -47,7 +47,7 @@ class Character {
 
 	/* Gere l'animation et l'affichage de l'obj */
 	jump = () => {
-		this.setPosFall(); // Faire augmenter de facon lineaire la vitesse pour une impression d'acceleration et de fluidité du personnage 
+		this.setPosFall();
 		this.managePos();
 		mouvement = 0;
 		if (this.speed != MAX_SPEED*-1) {
