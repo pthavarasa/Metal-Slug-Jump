@@ -1,4 +1,5 @@
-/* -- TYPE DE PLATFORME -- 
+/* 
+ *             -- TYPE DE PLATFORME -- 
  *
  * 1) VERT : REBOND NORMAL
  *
@@ -48,7 +49,6 @@ class Platform {
 	isInCollision = (obj) => {
 		/* On verifie la largeur */
 		if (this.isInInterval_X(obj.x,obj.x+obj.width)) {
-
 			/* On verifie la hauteur */ 
 			if (this.isInInterval_Y(obj.y+obj.height)) {
 				return 1;

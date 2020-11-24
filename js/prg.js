@@ -8,9 +8,9 @@ const PLATFORM = new Image();
 PLATFORM.src = "../img/plateforme.png";
 
 const PLATFORM_ = new Image();
-PLATFORM_.src = window.location.pathname+"img/hole/spritesheet.json";
+PLATFORM_.src = window.location.pathname+"img/hole/spritesheet.png";
 
-console.log(PLATFORM_);
+//console.log(PLATFORM_);
 
 const APESANTEUR = 2;
 const MAX_SPEED = 15 * APESANTEUR;
@@ -18,7 +18,7 @@ const MAX_MOV = 20;
 const LARG_PLATFORM = 100;
 const HAUT_PLATFORM = 20;
 
-let point = 0;
+let score = 0;
 let mouvement = 0;
 let mouv_prev = 0;
 
@@ -53,15 +53,15 @@ const getRandom = (min, max) => {
 }
 
 /* Renvoi le nouveau nombre total de point */
-const updatePoint = (bonus) => {
-  point += bonus;
+const updateScore = (point) => {
+  score += point;
 }
 
 /* Met a jour l'affiche de l'ecran lorsque le personnage depasse une certains hauteur */
 const upScreen = () => {
-  let moveUp = Math.floor((perso.y + 250) / 10); // Math.floor((perso.y + 250) / 10); 
+  let moveUp = Math.floor((perso.y + 250) / 10); 
   /* En fonction de moveUp : generer un certains nombre de platform */
-  updatePoint(moveUp);
+  updateScore(moveUp);
   updatePosPlatform(moveUp);
   perso.y += moveUp;
 }
@@ -73,17 +73,25 @@ const update = () => {
 	if (run){
     ctx.clearRect(0, 0, cnv.width, cnv.height);
     evnementClavier();
-	affichePlatform();
-	perso.jump();
+	  affichePlatform();
+	  perso.jump();
     if (perso.y <= 250) { 
     	createNewPlatform(0);
-		upScreen(); 
-	}
-	if (perso.y >= cnv.height) {
-		perso.y=0;
-	}
+		  upScreen(); 
+	  }
+  	if (perso.y >= cnv.height) {
+  		perso.y=0;
+  	}
   }
 }
+
+getAllSprite();
+
+console.log(arraySpritesheet);
+
+arrayToMap();
+
+
 
 genStartMap();
 perso.setSpeed(MAX_SPEED);
