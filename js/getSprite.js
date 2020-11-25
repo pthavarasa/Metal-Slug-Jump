@@ -1,8 +1,6 @@
+const repositoryArray = ["hole", "monster1", "monster2", "platform_base", "platform_break", "platform_weak", "trampoline"];
 let mapSpritesheet = new Map();
-let arraySpritesheet = [];
 let i = 0;
-let repository_current;
-let repositoryArray = ["hole", "monster1", "monster2", "platform_base", "platform_break", "platform_weak", "trampoline"];
 
 /* Recupere les sprites d'un fichier puis les place dans l'array global */
 function loadFile() {
@@ -11,7 +9,7 @@ function loadFile() {
         arraySprite = [];
         json = JSON.parse(this.responseText);
         img = new Image();
-        img.src = window.location.pathname+"img/"+repository_current+"/spritesheet.png";
+        img.src = window.location.pathname+"img/"+repositoryArray[i]+"/spritesheet.png";
         img.onload = () => {
         	let canvas, context, canvas2, context2;
         	let w, h, x, y;
@@ -21,6 +19,7 @@ function loadFile() {
         	canvas.height = json["meta"]["size"]["h"];
         	canvas.width = json["meta"]["size"]["w"];
         	context = canvas.getContext('2d');
+            context.drawImage(img,0,0);
 
         	for (let i=0; json["frames"][i.toString()+".png"]!==undefined; i++){
                 /*** Mettre le "sprite =" dans le setup ne fonctionne pas ***/
@@ -38,8 +37,7 @@ function loadFile() {
         		arraySprite.push(canvas2);
        	    }
         }   
-        //arraySpritesheet.set(repositoryArray[i++].toString(), i.toString());
-        arraySpritesheet.push(arraySprite);
+        mapSpritesheet.set(repositoryArray[i], arraySprite);
     }
 }
 
@@ -49,19 +47,11 @@ const getAllSprite = () => {
 	repositoryArray.forEach(repository => {
         let xobj = new XMLHttpRequest();
 		xobj.onload = loadFile;
-        repository_current=repository;
 		xobj.overrideMimeType("application/json");
         path = "./img/" + repository + "/spritesheet.json";
-		xobj.open("GET", path, true);
+		/*** Remettre en asynchrone pour + de performance ***/
+        xobj.open("GET", path, false); 
 		xobj.send();
+        i++;
 	});
-}
-
-const arrayToMap = () => {
-    let size = repositoryArray.length;
-    for (let i = 0; i < size; i++){
-        mapSpritesheet.set(repositoryArray[i],arraySpritesheet[i]);
-    }
-    console.log(mapSpritesheet);
-    return ;
 }
