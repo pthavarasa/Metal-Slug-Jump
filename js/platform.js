@@ -26,7 +26,7 @@ class Platform {
 		this.img = img;
 		this.dir = dir;
 		this.state = state;
-	}
+	};
 
 	/* Affiche la platforme courante dans le canvas */
 	affiche = () => {
@@ -93,6 +93,9 @@ const collision = (character) => {
 					if (platformArray[i].state <= 3) {platformArray[i].img = mapSpritesheet.get('platform_weak')[++platformArray[i].state];}
 					else {platformArray.splice(i,1);}
 				}
+				else if (platformArray[i].type == 3) {
+					platformArray.splice(i,1);
+				}
 				/* Definis le deplacement vers le haut */
 				character.setSpeed(MAX_SPEED);
 				return 1;
@@ -126,6 +129,7 @@ const updateAffichagePlatform = (speed) => {
 				platformArray[i].dir *= -1;
 			}
 		}
+
 		/* Si c'est une platform qui se casse */
 		else if (platformArray[i].type==4 && platformArray[i].state != 0){
 			/* Si je n'ai pas atteind le dernier sprite de l'animation de la cassure de la platform : j'affiche le sprite suivant */
@@ -141,7 +145,7 @@ const createNewPlatform = (type) => {
 
 	let dir=0;
 
-	if (type==1){dir = direction[getRandom(1,50)%2];}
+	if (type==1 || type==2){dir = direction[getRandom(1,50)%2];}
 
 	let img;
 
@@ -155,9 +159,24 @@ const createNewPlatform = (type) => {
 
 	// 240
 
+	let max;
+
+	let min;
+
 	let x = getRandom(0,cnv.width-larg);
 
-	let y = platformArray[platformArray.length-1].y - getRandom(50,180);
+	let y;
+
+	if (type==4){
+		/* Si c'est une platform cassable : change les distance d'apparition */
+		y = platformArray[platformArray.length-1].y - getRandom(10,30);
+	}
+	else {
+		if (platformArray[platformArray.length-1].type==4){
+
+		}
+		y = platformArray[platformArray.length-1].y - getRandom(50,150);
+	}
 
 	platformArray.push(new Platform(x,y,larg,haut,type,img,dir,0));
 }
@@ -179,4 +198,5 @@ const genStartMap = () => {
 
 	/* Genere 10 plateforme pour le debut de la partie */
 	for (let i = 0; i < nbPlatformStart; i++){createNewPlatform(0);}
+	setInterval(update,30);
 }

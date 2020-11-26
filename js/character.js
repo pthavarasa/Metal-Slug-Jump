@@ -43,7 +43,7 @@ class Character {
 			}
 		}
 		this.setPos(this.x + mouvement, this.y);
-	}
+	};
 
 	/* Gere l'animation et l'affichage de l'obj */
 	jump = () => {
@@ -56,4 +56,10 @@ class Character {
 		}
 		this.affiche();
 	};
+
+	/*** --- FONCTION POUR LES MONSTRES --- ***/
+}
+
+const createMonster = () => {
+
 }

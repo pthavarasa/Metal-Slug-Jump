@@ -25,7 +25,6 @@ let etatCle = {}; // tous les clé clavier ("true" si elle est appuyée)
 
 let perso = new Character(Math.floor(cnv.width/2), Math.floor(cnv.height/1.3), 40, 40, DOODLE);
 
-
 /* Attrape tout les evenement de touche presser et libérer */
 window.addEventListener('keyup',function(e){
   etatCle[e.keyCode || e.which] = false;
@@ -35,20 +34,14 @@ window.addEventListener('keydown',function(e){
 },true);
 cnv.addEventListener('click',function(e){
   if (!play){
-    if ((e.clientY >= cnv.height/4 && e.clientY <= (cnv.height/4)+75) && (e.clientX >= (cnv.width/2)-75 && e.clientX <= ((cnv.width/2)-75)+150)) {play=true;}
+    if ((e.clientY >= cnv.height/4 && e.clientY <= (cnv.height/4)+75) && (e.clientX >= (cnv.width/2)-75 && e.clientX <= ((cnv.width/2)-75)+150)) {
+      play=true;
+    }
+  }
+  else {
+    // Ecrire du code pour pouvoir mettre pause dans la partie
   }
 },true);
-
-  // x : (cnv.width/2)-75
-
-  // y : cnv.height/4
-
-  // l : 150
-
-  // h : 75
-
-//  ctx.drawImage(PLAY_BUTTON, (cnv.width/2)-75, cnv.height/4, 150, 75);
-
 
 /* Gere les deplacement horizontal */
 const evnementClavier = () => {
@@ -80,18 +73,17 @@ const updateScore = (point) => {
 /* Met a jour l'affiche de l'ecran lorsque le personnage depasse une certains hauteur */
 const upScreen = () => {
   let moveUp = Math.floor(((perso.y + 250) / 10) / 2); 
-  /* En fonction de moveUp : generer un certains nombre de platform */
   updateScore(moveUp);
   updatePosHighPlatform(moveUp);
   perso.y += moveUp;
 }
 
-play = false;
+let play = true;
 
 /* Rafraichis l'image du jeu */
 const update = () => {
   let type=0;
-	if (play){
+	if (true){
     ctx.clearRect(0, 0, cnv.width, cnv.height);
     ctx.drawImage(BACKGROUND, 0, 0, cnv.width, cnv.height);
     evnementClavier();
@@ -121,8 +113,11 @@ const update = () => {
 }
 
 /* Programme */
-getAllSprite();
-genStartMap();
+const startGame = () => {
+  getAllSprite();
+  genStartMap();
+  perso.setSpeed(MAX_SPEED);
+  setInterval(update,200);
+}
 
-perso.setSpeed(MAX_SPEED);
-setInterval(update,30);
+startGame();
