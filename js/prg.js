@@ -10,7 +10,7 @@ BACKGROUND.src = "../img/bck.png";
 const PLAY_BUTTON = new Image();
 PLAY_BUTTON.src = "../img/play-on.png";
 
-const APESANTEUR = 2;
+const APESANTEUR = 1;
 const MAX_SPEED = 15 * APESANTEUR;
 const MAX_MOV = 20;
 const LARG_PLATFORM = 50;
@@ -20,6 +20,7 @@ let score = 0;
 let mouvement = 0;
 
 let platformArray = [];
+let monsterArray = [];
 
 let etatCle = {}; // tous les clé clavier ("true" si elle est appuyée)
 
@@ -38,13 +39,10 @@ cnv.addEventListener('click',function(e){
       play=true;
     }
   }
-  else {
-    // Ecrire du code pour pouvoir mettre pause dans la partie
-  }
 },true);
 
 /* Gere les deplacement horizontal */
-const evnementClavier = () => {
+const eventKeyboard = () => {
   if (etatCle[37] || etatCle[65]){
     mouvement += MAX_MOV*-1;
   }
@@ -58,11 +56,19 @@ const getRandom = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min); /* Obtenir un meilleur rand avec un systeme de flottant -> recuperer la premiere virgule / derniere ? */
 }
 
+const getRandomCoef = (spec) => {
+  let i, sum=0, r=Math.random();
+  for (i in spec) {
+    sum += spec[i];
+    if (r <= sum) return i;
+  }
+}
+
 /* Renvoi un type aleatoire en fonction du score courant et de la rareté d'apparition des types */
 const getRandomType = (score) => {
-  let type = 0;
-  /* --- Mettre les formule pour obtenir la probabilité de chaque type --- */
-  return type;
+  /* Changer les probabilité en fonction du score */
+  const prob = {0:0.35, 1:0.2, 2:0.1, 3:0.1, 4:0.05, 5:0.2};
+  return getRandomCoef(prob);
 }
 
 /* Renvoi le nouveau nombre total de point */
@@ -74,11 +80,18 @@ const updateScore = (point) => {
 const upScreen = () => {
   let moveUp = Math.floor(((perso.y + 250) / 10) / 2); 
   updateScore(moveUp);
-  updatePosHighPlatform(moveUp);
+  updatePosHigh(moveUp,platformArray);
+  updatePosHigh(moveUp,monsterArray);
   perso.y += moveUp;
 }
 
-let play = true;
+/* Affiche le score */
+const drawScore = () => {
+  ctx.font = '30px serif';
+  ctx.fillText("Score : " + Math.floor(score/10), 10, 30);
+}
+
+let play = false;
 
 /* Rafraichis l'image du jeu */
 const update = () => {
@@ -86,28 +99,31 @@ const update = () => {
 	if (true){
     ctx.clearRect(0, 0, cnv.width, cnv.height);
     ctx.drawImage(BACKGROUND, 0, 0, cnv.width, cnv.height);
-    evnementClavier();
+    drawScore()
+    eventKeyboard();
 	  affichePlatform();
-    updateAffichagePlatform(5);
-	  perso.jump();
+    afficheMonster();
+    perso.jump();
     if (perso.y <= 250) { 
-      /* Affiche un nombre aleatoire [1-4] de platform a chaque frame ou le personnage fait monter l'ecran */
-      type=0;
-      for (let i = 0; i < (getRandom(0,50)%6)+1; i++){
-        /** Si une platform cassable apparait : prb de distance entre les platform car elle casse et le chemin n'est plus accessible **/
-        //type = getRandomType(score);
+      for (let i = 0; i < (getRandom(0,50)%3)+1; i++){
+        type = getRandomType(score);
         createNewPlatform(type);
-        type++;
+      }
+      for (let i = 0; i < getRandom(0,1); i++){
+        // Definir la probabilité qu'un monstres apparaissent
+        //createNewMonster(1);
       }
 		  upScreen(); 
 	  }
-  	if (perso.y >= cnv.height) {
+  	else if (perso.y >= cnv.height || collisionMonster(perso)) {
   		perso.y=0;
   	}
+    updateAffichagePlatform(5);
   }
   else {
     ctx.clearRect(0, 0, cnv.width, cnv.height);
     ctx.drawImage(BACKGROUND, 0, 0, cnv.width, cnv.height);
+    drawScore();
     ctx.drawImage(PLAY_BUTTON, (cnv.width/2)-75, cnv.height/4, 150, 75);
   }
 }
@@ -117,7 +133,7 @@ const startGame = () => {
   getAllSprite();
   genStartMap();
   perso.setSpeed(MAX_SPEED);
-  setInterval(update,200);
+  setInterval(update,30);
 }
 
 startGame();

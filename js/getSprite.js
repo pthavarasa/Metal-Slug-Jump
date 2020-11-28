@@ -22,8 +22,7 @@ function loadFile() {
             context.drawImage(img,0,0);
 
         	for (let i=0; json["frames"][i.toString()+".png"]!==undefined; i++){
-                /*** Mettre le "sprite =" dans le setup ne fonctionne pas ***/
-                sprite = json["frames"][i.toString()+".png"]
+                sprite = json["frames"][i.toString()+".png"];
         		w = sprite["sourceSize"]["w"];
         		h = sprite["sourceSize"]["h"];
         		x = sprite["frame"]["x"];

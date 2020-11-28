@@ -7,17 +7,20 @@
  *
  * 2) AUTRE_BLEU : ????
  *
- * 3) BLANC : ????
+ * 3) BLANC : REBOND + DISPARITION
  *
  * 4) MARRON : PAS DE REBOND + SE CASSE A LA COLLISION
  *
  * 5) YELLOW : REBOND NORMAL + AFFAIBLISSEMENT A CHAQUE INTERACTION
  *
+ *             -- TYPE DE MONSTRE -- 
  */
 
-/* Structure d'une platforme */
-class Platform {
-	constructor (x, y, width, height, type, img, dir, state) {
+const direction = [-1,1];
+
+/* Structure d'un objet */
+class Objet {
+	constructor (x, y, width, height, type, img, dir) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -25,10 +28,10 @@ class Platform {
 		this.type = type;
 		this.img = img;
 		this.dir = dir;
-		this.state = state;
+		this.state = 0;
 	};
 
-	/* Affiche la platforme courante dans le canvas */
+	/* Affiche l'element courant dans le canvas */
 	affiche = () => {
 		try {
 			ctx.drawImage(this.img, this.x, this.y);
@@ -38,26 +41,26 @@ class Platform {
 		}
 	};
 
-	/* Renvoi 1 si l'obj est dans l'intervalle de la largeur de la platform */
+	/* Renvoi 1 si l'obj est dans l'intervalle de la largeur de l'element courant */
 	isInInterval_X = (obj_x_min, obj_x_max) => {
 		let obj_x = [obj_x_min, obj_x_max];
 		for (let i = 0; i < 2; i++) {
-			if (obj_x[i] >= this.x && obj_x[i] <= this.x+this.width){
+			if (obj_x[i] >= this.x && obj_x[i] <= this.x + this.width){
 				return 1;
 			}
 		}
 		return 0;
 	};
 
-	/* Renvoi 1 si l'obj est dans l'intervalle de la hauteur de la platform */
+	/* Renvoi 1 si l'obj est dans l'intervalle de la hauteur de l'element courant */
 	isInInterval_Y = (obj_y) => {
-		if (obj_y >= this.y && obj_y <= this.y+this.height){
+		if (obj_y >= this.y && obj_y <= this.y + this.height){
 			return 1;
 		}
 		return 0;
 	};
 
-	/* Renvoi 1 si il y a une collision avec l'obj */
+	/* Renvoi 1 si il y a une collision avec l'element courant */
 	isInCollision = (obj) => {
 		/* On verifie la largeur */
 		if (this.isInInterval_X(obj.x,obj.x+obj.width)) {
@@ -70,6 +73,24 @@ class Platform {
 	};
 }
 
+/* Met a jour les positions des obj du tableau en hauteur */
+const updatePosHigh = (speed,array) => {
+	/* Change la hauteur des platforme */
+	for (let obj of array) {
+		obj.y += speed;
+	}
+	/* Supprime les platforme qui depasse du canvas */
+	for (let i = 0; i < array.length; i++){
+		if (array[i].y >= cnv.height) {
+			array.splice(i,1);
+		}
+	}
+}
+
+/************************/
+/*** --- PLATFORM --- ***/
+/************************/
+
 /* Affiche toute les platforme */
 const affichePlatform = () => { 
 	for (let platform of platformArray) {
@@ -77,8 +98,8 @@ const affichePlatform = () => {
 	}
 }
 
-/* Gere les potentiel collision */
-const collision = (character) => {
+/* Gere les potentiel collision avec des platform*/
+const collisionPlatform = (character) => {
 	for (let i = 0; i < platformArray.length; i++) {
 		/* Si je rentre en collision en descente */
 		if (platformArray[i].isInCollision(character) && character.speed <= 0){
@@ -105,20 +126,7 @@ const collision = (character) => {
 	return 0;
 }
 
-/* Met a jour les positions des platform */
-const updatePosHighPlatform = (speed) => {
-	/* Change la hauteur des platforme */
-	for (let platform of platformArray) {
-		platform.y += speed;
-	}
-	/* Supprime les platforme qui depasse du canvas */
-	for (let i = 0; i < platformArray.length; i++){
-		if (platformArray[i].y >= cnv.height) {
-			platformArray.splice(i,1);
-		}
-	}
-}
-
+/* Met a jour l'affichage des platform (non hauteur) */
 const updateAffichagePlatform = (speed) => {
 	for (let i = 0; i < platformArray.length; i++){
 		/* Si c'est une platform mouvante */
@@ -141,8 +149,6 @@ const updateAffichagePlatform = (speed) => {
 
 /* Creation d'une nouvelle platform a la hauteur dx */
 const createNewPlatform = (type) => {
-	const direction = [-1,1];
-
 	let dir=0;
 
 	if (type==1 || type==2){dir = direction[getRandom(1,50)%2];}
@@ -157,28 +163,15 @@ const createNewPlatform = (type) => {
 	let larg = LARG_PLATFORM; 
 	let haut = HAUT_PLATFORM;
 
-	// 240
-
-	let max;
-
-	let min;
-
 	let x = getRandom(0,cnv.width-larg);
-
-	let y;
+	let y = platformArray[platformArray.length-1].y - getRandom(50,150);
 
 	if (type==4){
-		/* Si c'est une platform cassable : change les distance d'apparition */
-		y = platformArray[platformArray.length-1].y - getRandom(10,30);
-	}
-	else {
-		if (platformArray[platformArray.length-1].type==4){
-
-		}
-		y = platformArray[platformArray.length-1].y - getRandom(50,150);
+		if (platformArray[platformArray.length-1].type==4){type=0; y = platformArray[platformArray.length-1].y - getRandom(50,150);}
+		else{y = platformArray[platformArray.length-1].y - getRandom(20,50);}
 	}
 
-	platformArray.push(new Platform(x,y,larg,haut,type,img,dir,0));
+	platformArray.push(new Objet(x,y,larg,haut,type,img,dir));
 }
 
 /* Genere les premiere platforme du jeu */
@@ -186,17 +179,78 @@ const genStartMap = () => {
 	const nbPlatformStart = 9;
 
 	/* Platform de depart pour poser toutes les autre */
-	platformArray.push(new Platform(
+	platformArray.push(new Objet(
 		getRandom(0,cnv.width-LARG_PLATFORM),
 		cnv.height-80,
 		LARG_PLATFORM,
 		HAUT_PLATFORM,
 		0,
 		mapSpritesheet.get('platform_base')[0],
-		0,
 		0));
 
 	/* Genere 10 plateforme pour le debut de la partie */
 	for (let i = 0; i < nbPlatformStart; i++){createNewPlatform(0);}
-	setInterval(update,30);
+}
+
+
+/***********************/
+/*** --- MONSTRE --- ***/
+/***********************/
+
+/* Affiche tout les element du tableau des monstres */
+const afficheMonster = () => {
+	for (let monster of monsterArray) {
+		monster.affiche();
+	}
+}
+
+/* Gere les potentiel collision avec des monstres*/
+const collisionMonster = (character) => {
+	for (let monster of monsterArray) {
+		/* Si je rentre en collision avec un monstre */
+		if (monster.isInCollision(character)){return 1;}
+	}
+	return 0;
+}
+
+/* Met a jour l'affichage des platform (non hauteur) */
+const updateAffichageMonster = (speed) => {
+	let index;
+	for (let monster of monsterArray){
+		/* Si c'est un monstre mouvant */
+		if (monster.type==1){
+			monster.x += speed * monster.dir;
+			/* Si le monstre sort de l'ecran : change la direction */
+			if ((monster.x > cnv.width-monster.width && monster.dir === 1) || (monster.x < 0 && monster.dir === -1)) {
+				monster.dir *= -1;
+				if (monster.dir==-1) index=1;
+				else index=0;
+				monster.img = mapSpritesheet.get('monster'+monster.type)[index];
+			}
+		}
+
+		else if (monster.type==2){
+			// Ecrire le patern de deplacement du monster 2
+		}
+	}
+}
+
+/* Ajout au tableau des monstres un nouvel element en fonction du type en parametre */
+const createNewMonster = (type) => {
+	let dir=0;
+
+	if (type==1 || type==2) {dir = direction[getRandom(1,50)%2];}
+
+	let width = 50;
+	let height = 50;
+
+	let x = getRandom(0,cnv.width-width);
+	let y = getRandom(0,150);
+
+	let img;
+
+	if (type==0){img = mapSpritesheet.get('hole')[0];}
+	else {img = mapSpritesheet.get('monster'+type)[0];}
+
+	monsterArray.push(new Objet(x,y,width,height,type,img,dir));	
 }

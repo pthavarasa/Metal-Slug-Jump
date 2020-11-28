@@ -1,11 +1,12 @@
 class Character {
-	constructor (x, y, width, height, src) {
+	constructor (x, y, width, height, img) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.img = img;
 		this.speed = 0;
-		this.src = src;
+		this.state = 0;
 	}
 
 	/* Definis la vitesse de deplacement de l'obj courant */
@@ -15,7 +16,7 @@ class Character {
 
 	/* Affiche l'obj courant */
 	affiche = () => {
-		ctx.drawImage(this.src, this.x, this.y, this.width, this.height);
+		ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
 	};
 
 	/* Definis la position de l'obj courant */
@@ -24,10 +25,7 @@ class Character {
 		this.y = ny;
 	};
 
-	/* 
-		Si trop a droite, passage a gauche / Si trop a gauche, passe a droite 
-		s'il sort de l'écran par droit il revien par gauche, vise versa
-	*/
+	/* Si le personnage sort de l'écran par la droite, il revient par la gauche [vice versa] */
 	managePos = () => {
 		if (this.x < -this.width/2) this.setPos(cnv.width-this.width,this.y);
 		if (this.x >= cnv.width) this.setPos(0, this.y);
@@ -39,7 +37,7 @@ class Character {
 		for (let i = this.speed; i != 0; i+=APESANTEUR*dir) {
 			this.setPos(this.x , this.y + APESANTEUR*dir);
 			if (this.speed <= 0){
-				if (collision(this)) break;
+				if (collisionPlatform(this)) break;
 			}
 		}
 		this.setPos(this.x + mouvement, this.y);
@@ -56,10 +54,4 @@ class Character {
 		}
 		this.affiche();
 	};
-
-	/*** --- FONCTION POUR LES MONSTRES --- ***/
-}
-
-const createMonster = () => {
-
 }
