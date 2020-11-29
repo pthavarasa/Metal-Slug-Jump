@@ -1,4 +1,15 @@
-const repositoryArray = ["hole", "monster1", "monster2", "platform_base", "platform_break", "platform_weak", "trampoline"];
+const repositoryArray = [
+	"hole", 
+	"monster1", 
+	"monster2", 
+	"platform_base", 
+	"platform_break", 
+	"platform_weak", 
+	"trampoline", 
+	"character_jump_bottom_right", 
+	"character_jump_top_right",
+	"character_jump_bottom_left", 
+	"character_jump_top_left"];
 let mapSpritesheet = new Map();
 let i = 0;
 
@@ -9,7 +20,7 @@ function loadFile() {
         arraySprite = [];
         json = JSON.parse(this.responseText);
         img = new Image();
-        img.src = window.location.pathname+"img/"+repositoryArray[i]+"/spritesheet.png";
+        img.src = "./img/"+repositoryArray[i]+"/spritesheet.png";
         img.onload = () => {
         	let canvas, context, canvas2, context2;
         	let w, h, x, y;

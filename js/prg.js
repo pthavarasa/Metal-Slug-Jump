@@ -24,7 +24,7 @@ let monsterArray = [];
 
 let etatCle = {}; // tous les clé clavier ("true" si elle est appuyée)
 
-let perso = new Character(Math.floor(cnv.width/2), Math.floor(cnv.height/1.3), 40, 40, DOODLE);
+let perso = new Character(Math.floor(cnv.width/2), Math.floor(cnv.height/1.3));
 
 /* Attrape tout les evenement de touche presser et libérer */
 window.addEventListener('keyup',function(e){

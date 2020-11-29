@@ -1,3 +1,10 @@
+let animeId = 0;
+const animeIdMax = 5; // nombre de l'image pour l'animation '0 inclus'
+let animeCount = 0;
+const animeDelay = 4; // delay entre chaque changement d'animation depend de nombre itération de fonction
+const characterZoom = 10;
+let lookDirection = "right";
+
 class Character {
 	constructor (x, y, width, height, img) {
 		this.x = x;
@@ -16,7 +23,12 @@ class Character {
 
 	/* Affiche l'obj courant */
 	affiche = () => {
-		ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+		if (etatCle[37] || etatCle[65]) lookDirection = "left";
+		if (etatCle[39] || etatCle[68]) lookDirection = "right";
+		this.width = mapSpritesheet.get("character_jump_bottom_"+lookDirection)[animeId].width + characterZoom;
+		this.height= mapSpritesheet.get("character_jump_bottom_"+lookDirection)[animeId].height + characterZoom;
+		ctx.drawImage(mapSpritesheet.get("character_jump_bottom_"+lookDirection)[animeId], this.x, this.y, this.width, this.height);
+		ctx.drawImage(mapSpritesheet.get("character_jump_top_"+lookDirection)[animeId], this.x-4, this.y-this.height, this.width+4, this.height+4);
 	};
 
 	/* Definis la position de l'obj courant */
@@ -37,10 +49,19 @@ class Character {
 		for (let i = this.speed; i != 0; i+=APESANTEUR*dir) {
 			this.setPos(this.x , this.y + APESANTEUR*dir);
 			if (this.speed <= 0){
-				if (collisionPlatform(this)) break;
+				if (collisionPlatform(this)){
+					animeId = 0;
+					break;
+				}
 			}
 		}
+		if(animeCount == animeDelay) animeCount=0;
+		if(!(animeCount%animeDelay)){
+			animeId++;
+			if(animeId > animeIdMax) animeId = animeIdMax;
+		}
 		this.setPos(this.x + mouvement, this.y);
+		animeCount +=1;
 	};
 
 	/* Gere l'animation et l'affichage de l'obj */
