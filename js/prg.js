@@ -10,7 +10,7 @@ BACKGROUND.src = "../img/bck.png";
 const PLAY_BUTTON = new Image();
 PLAY_BUTTON.src = "../img/play-on.png";
 
-const APESANTEUR = 1;
+const APESANTEUR = 2;
 const MAX_SPEED = 15 * APESANTEUR;
 const MAX_MOV = 20;
 const LARG_PLATFORM = 50;
@@ -64,11 +64,18 @@ const getRandomCoef = (spec) => {
   }
 }
 
+const getProb = (objet) => {
+  //objet=='Monster'?
+}
+
 /* Renvoi un type aleatoire en fonction du score courant et de la rareté d'apparition des types */
-const getRandomType = (score) => {
+const getRandomType = (score, objet) => {
   /* Changer les probabilité en fonction du score */
-  const prob = {0:0.35, 1:0.2, 2:0.1, 3:0.1, 4:0.05, 5:0.2};
-  return getRandomCoef(prob);
+  const probPlatform = {0:0.35, 1:0.2, 2:0.1, 3:0.1, 4:0.05, 5:0.2};
+  const probMonster = {0:0.98, 1:0.01, 2:0.01};
+  let prob;
+  objet=="Monster"?prob=getRandomCoef(probMonster):prob=getRandomCoef(probPlatform);
+  return prob;
 }
 
 /* Renvoi le nouveau nombre total de point */
@@ -106,19 +113,19 @@ const update = () => {
     perso.jump();
     if (perso.y <= 250) { 
       for (let i = 0; i < (getRandom(0,50)%3)+1; i++){
-        type = getRandomType(score);
+        type = getRandomType(score,'Platform');
         createNewPlatform(type);
       }
-      for (let i = 0; i < getRandom(0,1); i++){
-        // Definir la probabilité qu'un monstres apparaissent
-        //createNewMonster(1);
-      }
+      type=getRandomType(score,'Monster');
+      type--;
+      if (type!=-1) createNewMonster(1);
 		  upScreen(); 
 	  }
   	else if (perso.y >= cnv.height || collisionMonster(perso)) {
   		perso.y=0;
   	}
     updateAffichagePlatform(5);
+    updateAffichageMonster(5);
   }
   else {
     ctx.clearRect(0, 0, cnv.width, cnv.height);
@@ -135,5 +142,14 @@ const startGame = () => {
   perso.setSpeed(MAX_SPEED);
   setInterval(update,30);
 }
+
+let tab = [0,0,0];
+
+for (let i =  0; i <100; i++){
+  tab[getRandomType(641,"Monster")]++;
+}
+//console.log(tab);
+
+//console.log(getRandomType(641,"Monster"));
 
 startGame();

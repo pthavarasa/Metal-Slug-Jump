@@ -10,6 +10,7 @@ const repositoryArray = [
 	"character_jump_top_right",
 	"character_jump_bottom_left", 
 	"character_jump_top_left"];
+    
 let mapSpritesheet = new Map();
 let i = 0;
 

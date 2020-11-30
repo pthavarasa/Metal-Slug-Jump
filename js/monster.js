@@ -1,7 +1,17 @@
+/* 
+ *             -- TYPE DE MONSTRE -- 
+ *
+ * 0) Droite a gauche
+ *
+ * 1) ?
+ *
+ */
 
-/***********************/
-/*** --- MONSTRE --- ***/
-/***********************/
+class Monster extends Objet{
+	constructor (x,y,width,height,type,img,dir) {
+		super(x,y,width,height,type,img,dir);
+	}
+}
 
 /* Affiche tout les element du tableau des monstres */
 const afficheMonster = () => {
@@ -29,14 +39,12 @@ const updateAffichageMonster = (speed) => {
 			/* Si le monstre sort de l'ecran : change la direction */
 			if ((monster.x > cnv.width-monster.width && monster.dir === 1) || (monster.x < 0 && monster.dir === -1)) {
 				monster.dir *= -1;
-				if (monster.dir==-1) index=1;
-				else index=0;
-				monster.img = mapSpritesheet.get('monster'+monster.type)[index];
+				monster.img = mapSpritesheet.get('monster'+monster.type)[monster.dir==-1?1:0];
 			}
 		}
 
 		else if (monster.type==2){
-
+			// Ecrire le patern de deplacement du monster 2
 		}
 	}
 }
@@ -51,13 +59,12 @@ const createNewMonster = (type) => {
 	let height = 50;
 
 	let x = getRandom(0,cnv.width-width);
-	let y = getRandom(0,150);
+	let y = 0;
 
 	let img;
 
 	if (type==0){img = mapSpritesheet.get('hole')[0];}
 	else {img = mapSpritesheet.get('monster'+type)[0];}
 
-	monsterArray.push(new Objet(x,y,width,height,type,img,dir));	
+	monsterArray.push(new Monster(x,y,width,height,type,img,dir));	
 }
-
