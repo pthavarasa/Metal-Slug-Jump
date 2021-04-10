@@ -2,10 +2,10 @@ const cnv = document.getElementById('myCanvas');
 const ctx = cnv.getContext('2d');
 
 const BACKGROUND = new Image();
-BACKGROUND.src = "../img/bck.png";
+BACKGROUND.src = "./img/bck.png";
 
 const PLAY_BUTTON = new Image();
-PLAY_BUTTON.src = "../img/play-on.png";
+PLAY_BUTTON.src = "./img/play-on.png";
 
 audio = new Audio("./song/background-song.mp3");
 
