@@ -2,7 +2,7 @@
 Doodle jump like game, web game based on html css and javascript.
 
 ### Play Online :
-[Link : thavarasa.name/game](http://thavarasa.name/game)
+[Link : https://pthavarasa.github.io/Metal-Slug-Jump](https://pthavarasa.github.io/Metal-Slug-Jump)
 
 ### Screenshots
 ![](metalslug.png)
